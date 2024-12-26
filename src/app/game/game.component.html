@@ -1,0 +1,16 @@
+<p>game works!</p>
+<div class="game-container">
+    <button class="start-btn" (click)="startGame()">Start Game</button>
+    <div *ngIf="showSequence" class="sequence">
+      <div *ngFor="let color of sequence" class="color-box" [ngStyle]="{ background: color }"></div>
+    </div>
+    <div *ngIf="!showSequence && !gameOver" class="color-buttons">
+      <button *ngFor="let color of colors" class="color-btn" [ngStyle]="{ background: color }" (click)="handleColorClick(color)"></button>
+    </div>
+    <button class="validate-btn" (click)="validate()" [disabled]="showSequence || userSequence.length === 0">Validate</button>
+    <button class="reset-btn" (click)="reset()" [disabled]="showSequence || userSequence.length === 0">Reset</button>
+    <div *ngIf="gameOver" class="game-over">
+      Game Over! Your final score: {{ currentLevel }}
+    </div>
+  </div>
+  
