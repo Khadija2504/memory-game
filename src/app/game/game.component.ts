@@ -5,11 +5,10 @@ import { GameService } from '../services/game.service';
   selector: 'app-game',
   standalone: false,
   templateUrl: './game.component.html',
-  styleUrl: './game.component.css'
+  styleUrl: './game.component.css',
 })
-
 export class GameComponent {
-  colors = ['red', 'blue', 'green', 'yellow'];
+  colors = ['red', 'blue', 'green', 'yellow', 'orange'];
   sequence: string[] = [];
   userSequence: string[] = [];
   level = 1;
@@ -17,6 +16,9 @@ export class GameComponent {
   gameStarted = false;
   canClick = false;
   gameOver = false;
+  additionalColors = ['purple', 'cyan', 'pink', 'lime', 'brown'];
+  timer = 15;
+  timerInterval: any;
 
   constructor(private gameService: GameService) {}
 
@@ -26,12 +28,20 @@ export class GameComponent {
     this.level = 1;
     this.score = 0;
     this.gameOver = false;
+    this.timer = 15;
     this.nextLevel();
   }
 
   nextLevel() {
     this.canClick = false;
     this.userSequence = [];
+    this.stopTimer();
+    if (this.level % 5 === 0 && this.additionalColors.length > 0) {
+      const newColor = this.additionalColors.shift();
+      if (newColor) {
+        this.colors.push(newColor);
+      }
+    }
     this.sequence = this.gameService.addColorToSequence(this.sequence, this.colors);
     this.displaySequence();
   }
@@ -47,6 +57,7 @@ export class GameComponent {
       } else {
         clearInterval(interval);
         this.canClick = true;
+        this.startTimer();
       }
     }, 1000);
   }
@@ -60,18 +71,45 @@ export class GameComponent {
   }
 
   selectColor(color: string) {
-    this.userSequence.push(color);
+    if (this.canClick) {
+      this.userSequence.push(color);
+    }
   }
 
   validateSequence() {
+    this.stopTimer();
     if (this.gameService.isSequenceCorrect(this.sequence, this.userSequence)) {
-      this.score += this.level * 10;
+      this.score += this.level * 10 * this.timer;
       this.level++;
       this.nextLevel();
     } else {
-      this.gameOver = true;
-      this.gameStarted = false;
+      this.endGame();
     }
+  }
+
+  startTimer() {
+    this.timer = 15;
+    this.timerInterval = setInterval(() => {
+      this.timer--;
+      if (this.timer <= 0) {
+        this.stopTimer();
+        this.endGame();
+      }
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  endGame() {
+    this.gameOver = true;
+    this.gameStarted = false;
+    this.canClick = false;
+    this.stopTimer();
   }
 
   resetSequence() {
