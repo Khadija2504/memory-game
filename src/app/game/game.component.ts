@@ -8,7 +8,7 @@ import { GameService } from '../services/game.service';
   styleUrl: './game.component.css',
 })
 export class GameComponent {
-  colors = ['red', 'blue', 'green', 'yellow', 'orange'];
+  colors = ['red'];
   sequence: string[] = [];
   userSequence: string[] = [];
   level = 1;
@@ -16,7 +16,8 @@ export class GameComponent {
   gameStarted = false;
   canClick = false;
   gameOver = false;
-  additionalColors = ['purple', 'cyan', 'pink', 'lime', 'brown'];
+  selectedColor: string | null = null;
+  additionalColors = ['purple', 'blue', 'cyan', 'pink', 'lime', 'brown', 'green', 'yellow', 'orange'];
   timer = 15;
   timerInterval: any;
 
@@ -36,7 +37,7 @@ export class GameComponent {
     this.canClick = false;
     this.userSequence = [];
     this.stopTimer();
-    if (this.level % 5 === 0 && this.additionalColors.length > 0) {
+    if (this.level % 1 === 0 && this.additionalColors.length > 0) {
       const newColor = this.additionalColors.shift();
       if (newColor) {
         this.colors.push(newColor);
@@ -72,6 +73,7 @@ export class GameComponent {
 
   selectColor(color: string) {
     if (this.canClick) {
+      this.selectedColor = color;
       this.userSequence.push(color);
     }
   }
@@ -88,7 +90,7 @@ export class GameComponent {
   }
 
   startTimer() {
-    this.timer = 15;
+    this.timer = 70;
     this.timerInterval = setInterval(() => {
       this.timer--;
       if (this.timer <= 0) {
@@ -113,6 +115,7 @@ export class GameComponent {
   }
 
   resetSequence() {
+    this.selectedColor = null;
     this.userSequence = [];
   }
 }
