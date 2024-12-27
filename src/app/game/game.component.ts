@@ -90,7 +90,7 @@ export class GameComponent {
   }
 
   startTimer() {
-    this.timer = 70;
+    this.timer = 15;
     this.timerInterval = setInterval(() => {
       this.timer--;
       if (this.timer <= 0) {
