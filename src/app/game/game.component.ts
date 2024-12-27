@@ -1,60 +1,80 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { GameService } from '../services/game.service';
 
 @Component({
   selector: 'app-game',
   standalone: false,
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.css']
+  styleUrl: './game.component.css'
 })
-export class GameComponent implements OnInit {
+
+export class GameComponent {
+  colors = ['red', 'blue', 'green', 'yellow'];
   sequence: string[] = [];
   userSequence: string[] = [];
-  colors: string[] = ['red', 'blue', 'green', 'yellow'];
-  showSequence: boolean = false;
-  currentLevel: number = 0;
-  gameOver: boolean = false;
+  level = 1;
+  score = 0;
+  gameStarted = false;
+  canClick = false;
+  gameOver = false;
 
   constructor(private gameService: GameService) {}
 
-  ngOnInit(): void {
-    this.startGame();
-  }
-
-  startGame(): void {
-    this.gameService.startGame();
-    this.sequence = this.gameService.getSequence();
-    this.currentLevel = this.gameService.getLevel();
-    this.showSequence = true;
+  startGame() {
+    this.gameStarted = true;
+    this.sequence = [];
+    this.level = 1;
+    this.score = 0;
     this.gameOver = false;
-    setTimeout(() => {
-      this.showSequence = false;
-    }, 15000); // 15 seconds
+    this.nextLevel();
   }
 
-  handleColorClick(color: string): void {
-    if (this.showSequence || this.gameOver) return;
-    this.gameService.addUserInput(color);
-    this.userSequence.push(color);
+  nextLevel() {
+    this.canClick = false;
+    this.userSequence = [];
+    this.sequence = this.gameService.addColorToSequence(this.sequence, this.colors);
+    this.displaySequence();
   }
 
-  validate(): void {
-    if (this.gameService.validateSequence()) {
-      this.gameService.resetUserSequence();
-      this.gameService.addColor();
-      this.sequence = this.gameService.getSequence();
-      this.currentLevel = this.gameService.getLevel();
-      this.userSequence = [];
-      this.showSequence = true;
-      setTimeout(() => {
-        this.showSequence = false;
-      }, 15000); // 15 seconds
-    } else {
-      this.gameOver = true;
+  displaySequence() {
+    let index = 0;
+
+    const interval = setInterval(() => {
+      if (index < this.sequence.length) {
+        const color = this.sequence[index];
+        this.highlightColor(color);
+        index++;
+      } else {
+        clearInterval(interval);
+        this.canClick = true;
+      }
+    }, 1000);
+  }
+
+  highlightColor(color: string) {
+    const button = document.querySelector(`[style="background-color: ${color};"]`);
+    if (button) {
+      button.classList.add('highlight');
+      setTimeout(() => button.classList.remove('highlight'), 500);
     }
   }
 
-  reset(): void {
+  selectColor(color: string) {
+    this.userSequence.push(color);
+  }
+
+  validateSequence() {
+    if (this.gameService.isSequenceCorrect(this.sequence, this.userSequence)) {
+      this.score += this.level * 10;
+      this.level++;
+      this.nextLevel();
+    } else {
+      this.gameOver = true;
+      this.gameStarted = false;
+    }
+  }
+
+  resetSequence() {
     this.userSequence = [];
   }
 }

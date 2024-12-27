@@ -1,37 +1,236 @@
 .game-container {
     text-align: center;
-    margin-top: 20px;
   }
   
   .color-buttons {
-    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    margin: 20px;
   }
   
-  .color-box,
-  .color-btn {
+  .color-buttons button {
     width: 100px;
     height: 100px;
-    margin: 10px;
-    display: inline-block;
-    cursor: pointer;
-  }
-  
-  .color-box {
-    border: 2px solid #000;
-  }
-  
-  .start-btn,
-  .validate-btn,
-  .reset-btn {
-    padding: 10px 20px;
     margin: 5px;
-    font-size: 16px;
+    border: none;
     cursor: pointer;
+    outline: none;
+    transition: transform 0.2s;
   }
   
-  .game-over {
-    font-size: 24px;
-    color: red;
-    margin-top: 20px;
+  .color-buttons button.highlight {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+
+  .wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .inner {
+    --w: 100px;
+    --h: 150px;
+    --translateZ: calc((var(--w) + var(--h)) + 0px);
+    --rotateX: -15deg;
+    --perspective: 1000px;
+    position: absolute;
+    width: var(--w);
+    height: var(--h);
+    top: 25%;
+    left: calc(50% - (var(--w) / 2) - 2.5px);
+    z-index: 2;
+    transform-style: preserve-3d;
+    transform: perspective(var(--perspective));
+    animation: rotating 20s linear infinite; /* */
+  }
+  @keyframes rotating {
+    from {
+      transform: perspective(var(--perspective)) rotateX(var(--rotateX))
+        rotateY(0);
+    }
+    to {
+      transform: perspective(var(--perspective)) rotateX(var(--rotateX))
+        rotateY(1turn);
+    }
+  }
+  
+  .card {
+    position: absolute;
+    border: 2px solid rgba(var(--color-card));
+    border-radius: 12px;
+    overflow: hidden;
+    inset: 0;
+    transform: rotateY(calc((360deg / var(--quantity)) * var(--index)))
+      translateZ(var(--translateZ));
+  }
+  
+  .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #0000
+      radial-gradient(
+        circle,
+        rgba(var(--color-card), 0.2) 0%,
+        rgba(var(--color-card), 0.6) 80%,
+        rgba(var(--color-card), 0.9) 100%
+      );
+  }
+  
+  .voltage-button {
+    position: relative;
+  }
+  
+  .voltage-button button {
+    color: white;
+    background: #0D1127;
+    padding: 1rem 3rem 1rem 3rem;
+    border-radius: 5rem;
+    border: 5px solid #5978F3;
+    font-size: 1.2rem;
+    line-height: 1em;
+    letter-spacing: 0.075em;
+    transition: background 0.3s;
+  }
+  
+  .voltage-button button:hover {
+    cursor: pointer;
+    background: #0F1C53;
+  }
+  
+  .voltage-button button:hover + svg, .voltage-button button:hover + svg + .dots {
+    opacity: 1;
+  }
+  
+  .voltage-button svg {
+    display: block;
+    position: absolute;
+    top: -0.75em;
+    left: -0.25em;
+    width: calc(100% + 0.5em);
+    height: calc(100% + 1.5em);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+    transition-delay: 0.1s;
+  }
+  
+  .voltage-button svg path {
+    stroke-dasharray: 100;
+    filter: url("#glow");
+  }
+  
+  .voltage-button svg path.line-1 {
+    stroke: #f6de8d;
+    stroke-dashoffset: 0;
+    animation: spark-1 3s linear infinite;
+  }
+  
+  .voltage-button svg path.line-2 {
+    stroke: #6bfeff;
+    stroke-dashoffset: 500;
+    animation: spark-2 3s linear infinite;
+  }
+  
+  .voltage-button .dots {
+    opacity: 0;
+    transition: opacity 0.3s;
+    transition-delay: 0.4s;
+  }
+  
+  .voltage-button .dots .dot {
+    width: 1rem;
+    height: 1rem;
+    background: white;
+    border-radius: 100%;
+    position: absolute;
+    opacity: 0;
+  }
+  
+  .voltage-button .dots .dot-1 {
+    top: 0;
+    left: 20%;
+    animation: fly-up 3s linear infinite;
+  }
+  
+  .voltage-button .dots .dot-2 {
+    top: 0;
+    left: 55%;
+    animation: fly-up 3s linear infinite;
+    animation-delay: 0.5s;
+  }
+  
+  .voltage-button .dots .dot-3 {
+    top: 0;
+    left: 80%;
+    animation: fly-up 3s linear infinite;
+    animation-delay: 1s;
+  }
+  
+  .voltage-button .dots .dot-4 {
+    bottom: 0;
+    left: 30%;
+    animation: fly-down 3s linear infinite;
+    animation-delay: 2.5s;
+  }
+  
+  .voltage-button .dots .dot-5 {
+    bottom: 0;
+    left: 65%;
+    animation: fly-down 3s linear infinite;
+    animation-delay: 1.5s;
+  }
+  
+  @keyframes spark-1 {
+    to {
+      stroke-dashoffset: -1000;
+    }
+  }
+  
+  @keyframes spark-2 {
+    to {
+      stroke-dashoffset: -500;
+    }
+  }
+  
+  @keyframes fly-up {
+    0% {
+      opacity: 0;
+      transform: translateY(0) scale(0.2);
+    }
+  
+    5% {
+      opacity: 1;
+      transform: translateY(-1.5rem) scale(0.4);
+    }
+  
+    10%, 100% {
+      opacity: 0;
+      transform: translateY(-3rem) scale(0.2);
+    }
+  }
+  
+  @keyframes fly-down {
+    0% {
+      opacity: 0;
+      transform: translateY(0) scale(0.2);
+    }
+  
+    5% {
+      opacity: 1;
+      transform: translateY(1.5rem) scale(0.4);
+    }
+  
+    10%, 100% {
+      opacity: 0;
+      transform: translateY(3rem) scale(0.2);
+    }
   }
   
