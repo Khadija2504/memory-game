@@ -1,4 +1,5 @@
 <div class="game-container">
+    <app-score [score]="score" [level]="level"></app-score>
     <div *ngIf="!gameStarted">
         <div class="wrapper" style="height: 500px;">
           <h1>Memory game</h1>
@@ -67,6 +68,7 @@
   
     <div *ngIf="gameStarted">
       <h2>Niveau: {{ level }}</h2>
+      <p>Time Remaining: {{ timer }} seconds</p>
       <div class="color-buttons">
         <button
           *ngFor="let color of colors"
