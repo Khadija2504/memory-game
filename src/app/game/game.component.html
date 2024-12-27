@@ -38,8 +38,8 @@
           </div>
           <div style="text-align: center; display: flex; align-items: center; justify-content: center;" class="voltage-button">
             
-            <button (click)="startGame()">Play</button>
-            <svg version="1.1" style="width: 50%;" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 234.6 61.3" preserveAspectRatio="none" xml:space="preserve">
+            <button (click)="startGame()">Start</button>
+            <svg version="1.1" style="width: 11%;" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 234.6 61.3" preserveAspectRatio="none" xml:space="preserve">
            
                 <filter id="glow">
                     <feGaussianBlur class="blur" result="coloredBlur" stdDeviation="2"></feGaussianBlur>
@@ -66,21 +66,60 @@
         </div>
     </div>
   
-    <div *ngIf="gameStarted">
-      <h2>Niveau: {{ level }}</h2>
-      <p>Time Remaining: {{ timer }} seconds</p>
-      <div class="color-buttons">
-        <button
-          *ngFor="let color of colors"
-          [ngStyle]="{ 'background-color': color }"
-          [disabled]="!canClick"
-          (click)="selectColor(color)"
-        ></button>
+    <div *ngIf="gameStarted" class="bg">
+        <p class="game-timer">Time Remaining: {{ timer }} seconds</p>
+        <div class="color-buttons inner-btn">
+          <button class="clicked-btn"
+            *ngFor="let color of colors"
+            [ngStyle]="{ 'background-color': color }"
+            [disabled]="!canClick"
+            (click)="selectColor(color)"
+            [class.clicked]="selectedColor === color"
+          ></button>
+        </div>
+        <div class="action-buttons">
+          <button *ngIf="canClick" class="action-btn-validate" (click)="validateSequence()">Valider</button>
+          <button *ngIf="canClick" class="action-btn" (click)="resetSequence()">Réinitialiser</button>
+        </div>
       </div>
-      <button *ngIf="canClick" (click)="validateSequence()">Valider</button>
-      <button *ngIf="canClick" (click)="resetSequence()">Réinitialiser</button>
-    </div>
-  
+      <div class="container">
+        <div class="bubble">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="bubble">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="bubble">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="bubble">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="bubble">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+     </div>
+      
     <p *ngIf="gameOver">Game Over! Score final: {{ score }}</p>
   </div>
 
