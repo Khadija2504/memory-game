@@ -8,9 +8,8 @@ describe('ScoreComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ScoreComponent]
-    })
-    .compileComponents();
+      declarations: [ScoreComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ScoreComponent);
     component = fixture.componentInstance;
@@ -19,5 +18,14 @@ describe('ScoreComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('rounds seconds up and flags low time only while running', () => {
+    component.timeLeft = 2.2;
+    component.timeTotal = 10;
+    expect(component.seconds).toBe(3);
+    expect(component.low).toBeFalse();
+    component.running = true;
+    expect(component.low).toBeTrue();
   });
 });

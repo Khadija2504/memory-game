@@ -1,22 +1,180 @@
-.score-container {
-    text-align: center;
-    margin: 10px 0;
-    display: flex;
-    justify-content: space-evenly;
-    background-color: beige;
-    padding: 10px;
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    color: #333;
-  }
-  
-  .score-container p {
-    margin: 5px 0;
+:host {
+  display: block;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+  border-radius: 32px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 24px 60px -24px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.label {
+  font: 500 0.68rem/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---- timer ring -------------------------------------------------------- */
+
+.timer {
+  position: relative;
+  width: 168px;
+  aspect-ratio: 1;
+  margin: 4px auto 6px;
+}
+
+.timer svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer circle {
+  fill: none;
+  stroke-width: 9;
+}
+
+.track { stroke: rgba(255, 255, 255, 0.08); }
+
+.arc {
+  stroke: url(#timer-grad);
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(198, 255, 74, 0.45));
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+.timer-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.timer-label strong {
+  font: 700 3rem/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-label small {
+  font: 500 0.68rem/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.timer.idle .arc { stroke: rgba(255, 255, 255, 0.22); filter: none; }
+.timer.idle strong { color: var(--muted); }
+
+.timer.low .arc { stroke: var(--bad); filter: drop-shadow(0 0 8px rgba(255, 93, 115, 0.7)); }
+.timer.low strong { color: var(--bad); animation: pulse 0.5s ease-in-out infinite alternate; }
+
+/* ---- lives ------------------------------------------------------------- */
+
+.lives {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 93, 115, 0.07);
+  border: 1px solid rgba(255, 93, 115, 0.18);
+}
+
+.hearts {
+  display: flex;
+  gap: 6px;
+}
+
+.hearts svg {
+  width: 26px;
+  height: 26px;
+  fill: var(--bad);
+  filter: drop-shadow(0 0 6px rgba(255, 93, 115, 0.6));
+  transition: fill 0.3s, filter 0.3s, transform 0.3s;
+}
+
+.hearts svg.lost {
+  fill: rgba(255, 255, 255, 0.1);
+  filter: none;
+  animation: lose 0.5s ease;
+}
+
+/* ---- stats ------------------------------------------------------------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat.wide { grid-column: span 2; }
+
+.value {
+  font: 700 1.5rem/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.value.accent { color: var(--go); }
+
+@keyframes pulse {
+  to { transform: scale(1.12); }
+}
+
+@keyframes lose {
+  0% { transform: scale(1); fill: var(--bad); }
+  40% { transform: scale(1.4) rotate(-10deg); }
+  100% { transform: scale(1); }
+}
+
+/* ---- compact layout (stacked above the board) -------------------------- */
+
+@media (max-width: 900px) {
+  .panel {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'timer lives'
+      'timer stats';
+    gap: 12px 16px;
+    padding: 16px;
+    border-radius: 24px;
   }
 
-  .bg {
-    background-color: gainsboro;
-    padding: 80px;
-    margin-top: 80px;
-  }
-  
+  .timer { grid-area: timer; width: 110px; margin: 0; align-self: center; }
+  .timer-label strong { font-size: 2rem; }
+  .lives { grid-area: lives; padding: 10px 14px; }
+  .stats { grid-area: stats; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat { padding: 10px 12px; }
+  .stat.wide { grid-column: auto; }
+  .value { font-size: 1.15rem; }
+  .hearts svg { width: 22px; height: 22px; }
+}
+
+@media (max-width: 420px) {
+  .timer { width: 88px; }
+  .timer-label strong { font-size: 1.6rem; }
+  .timer-label small { display: none; }
+  .stat { padding: 9px 10px; }
+  .value { font-size: 1rem; }
+}
